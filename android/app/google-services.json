@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "80353237986",
+    "firebase_url": "https://tarihx-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tarihx",
+    "storage_bucket": "tarihx.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80353237986:android:eb97e51815ef7d048db7bb",
+        "android_client_info": {
+          "package_name": "app.web.tarihx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjXQbaDclEhseLBOpWpYYRUQkeCQ6dIqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
