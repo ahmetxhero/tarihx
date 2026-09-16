@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,9 +92,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     String fontFamily = 'Inter';
-    // Eğer başka diller eklenirse burada farklı fontlar atanabilir
-    // if (locale.languageCode == 'ar') fontFamily = 'NotoSansArabic';
-    final lightColorScheme = ColorScheme(
+    const lightColorScheme = ColorScheme(
       brightness: Brightness.light,
       primary: Color(0xFF6750A4), // Modern mor
       onPrimary: Colors.white,
@@ -103,12 +100,10 @@ class _MyAppState extends State<MyApp> {
       onSecondary: Colors.white,
       error: Color(0xFFB3261E),
       onError: Colors.white,
-      background: Color(0xFFF5F5FA), // Yumuşak açık gri
-      onBackground: Color(0xFF1C1B1F),
-      surface: Colors.white,
+      surface: Color(0xFFF5F5FA), // Yumuşak açık gri
       onSurface: Color(0xFF1C1B1F),
     );
-    final darkColorScheme = ColorScheme(
+    const darkColorScheme = ColorScheme(
       brightness: Brightness.dark,
       primary: Color(0xFF8D7FC7), // Açık mor
       onPrimary: Color(0xFF1C1B1F),
@@ -116,8 +111,6 @@ class _MyAppState extends State<MyApp> {
       onSecondary: Color(0xFF1C1B1F),
       error: Color(0xFFF2B8B5),
       onError: Color(0xFF601410),
-      background: Color(0xFF181820), // Koyu arka plan
-      onBackground: Colors.white,
       surface: Color(0xFF232336),
       onSurface: Colors.white,
     );
@@ -140,25 +133,25 @@ class _MyAppState extends State<MyApp> {
           elevation: 0,
         ),
         navigationBarTheme: NavigationBarThemeData(
-          backgroundColor: lightColorScheme.background,
-          indicatorColor: lightColorScheme.primary.withOpacity(0.1),
-          labelTextStyle: MaterialStateProperty.all(
+          backgroundColor: lightColorScheme.surface,
+          indicatorColor: lightColorScheme.primary.withValues(alpha: 0.1),
+          labelTextStyle: WidgetStateProperty.all(
             TextStyle(color: lightColorScheme.primary, fontWeight: FontWeight.w600),
           ),
         ),
         switchTheme: SwitchThemeData(
-          thumbColor: MaterialStateProperty.all(lightColorScheme.primary),
-          trackColor: MaterialStateProperty.all(lightColorScheme.primary.withOpacity(0.3)),
+          thumbColor: WidgetStateProperty.all(lightColorScheme.primary),
+          trackColor: WidgetStateProperty.all(lightColorScheme.primary.withValues(alpha: 0.3)),
         ),
         segmentedButtonTheme: SegmentedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.selected)) {
-                return lightColorScheme.primary.withOpacity(0.15);
+            backgroundColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return lightColorScheme.primary.withValues(alpha: 0.15);
               }
               return lightColorScheme.surface;
             }),
-            foregroundColor: MaterialStateProperty.all(lightColorScheme.primary),
+            foregroundColor: WidgetStateProperty.all(lightColorScheme.primary),
           ),
         ),
       ),
@@ -178,25 +171,25 @@ class _MyAppState extends State<MyApp> {
           elevation: 0,
         ),
         navigationBarTheme: NavigationBarThemeData(
-          backgroundColor: darkColorScheme.background,
-          indicatorColor: darkColorScheme.primary.withOpacity(0.15),
-          labelTextStyle: MaterialStateProperty.all(
+          backgroundColor: darkColorScheme.surface,
+          indicatorColor: darkColorScheme.primary.withValues(alpha: 0.15),
+          labelTextStyle: WidgetStateProperty.all(
             TextStyle(color: darkColorScheme.primary, fontWeight: FontWeight.w600),
           ),
         ),
         switchTheme: SwitchThemeData(
-          thumbColor: MaterialStateProperty.all(darkColorScheme.primary),
-          trackColor: MaterialStateProperty.all(darkColorScheme.primary.withOpacity(0.3)),
+          thumbColor: WidgetStateProperty.all(darkColorScheme.primary),
+          trackColor: WidgetStateProperty.all(darkColorScheme.primary.withValues(alpha: 0.3)),
         ),
         segmentedButtonTheme: SegmentedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.selected)) {
-                return darkColorScheme.primary.withOpacity(0.25);
+            backgroundColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return darkColorScheme.primary.withValues(alpha: 0.25);
               }
               return darkColorScheme.surface;
             }),
-            foregroundColor: MaterialStateProperty.all(darkColorScheme.primary),
+            foregroundColor: WidgetStateProperty.all(darkColorScheme.primary),
           ),
         ),
       ),
@@ -276,6 +269,8 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class TodayPage extends StatelessWidget {
+  const TodayPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -289,6 +284,8 @@ class TodayPage extends StatelessWidget {
 }
 
 class TomorrowPage extends StatelessWidget {
+  const TomorrowPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
@@ -382,13 +379,14 @@ class _WikiEventsListState extends State<WikiEventsList> {
                     int openCount = prefs.getInt('detail_open_count') ?? 0;
                     openCount++;
                     await prefs.setInt('detail_open_count', openCount);
-                    print('DEBUG: detail_open_count = ' + openCount.toString());
+                    debugPrint('DEBUG: detail_open_count = $openCount');
                     final adShowIndexes = [1, 3, 7, 10];
+                    if (!context.mounted) return;
                     if (adShowIndexes.contains(openCount)) {
-                      bool _navigated = false;
+                      bool navigated = false;
                       void navigateOnce() {
-                        if (_navigated) return;
-                        _navigated = true;
+                        if (navigated || !context.mounted) return;
+                        navigated = true;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -415,13 +413,13 @@ class _WikiEventsListState extends State<WikiEventsList> {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor.withOpacity(0.98),
+                      color: Theme.of(context).cardColor.withValues(alpha: 0.98),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withValues(alpha: 0.04),
                           blurRadius: 8,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
@@ -679,7 +677,7 @@ class SettingsPage extends StatelessWidget {
 class ThemeModeSelector extends StatelessWidget {
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode> onChanged;
-  const ThemeModeSelector({required this.themeMode, required this.onChanged});
+  const ThemeModeSelector({super.key, required this.themeMode, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -720,6 +718,8 @@ final List<LanguageOption> languageOptions = [
 ];
 
 class LanguageDropdown extends StatelessWidget {
+  const LanguageDropdown({super.key});
+
   @override
   Widget build(BuildContext context) {
     final currentLocale = context.locale;
@@ -870,7 +870,7 @@ class _WikiEventDetailPageState extends State<WikiEventDetailPage> {
                     width: 240,
                     height: 240,
                     fit: BoxFit.cover,
-                    errorBuilder: (c, e, s) => Icon(Icons.image_not_supported, size: 80),
+                    errorBuilder: (c, e, s) => const Icon(Icons.image_not_supported, size: 80),
                   ),
                 ),
               ),
@@ -887,7 +887,7 @@ class _WikiEventDetailPageState extends State<WikiEventDetailPage> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
@@ -1056,7 +1056,6 @@ const String testRewardedInterstitialAdUnitIdIOS = 'ca-app-pub-9590009775953981/
 String get rewardedInterstitialAdUnitId => Platform.isAndroid ? testRewardedInterstitialAdUnitIdAndroid : testRewardedInterstitialAdUnitIdIOS;
 
 class RewardedInterstitialAdManager {
-  static RewardedInterstitialAd? _ad;
   static bool _isLoading = false;
 
   static void loadAd({required VoidCallback onRewarded, required VoidCallback onClosed, required VoidCallback onFailed}) {
@@ -1067,17 +1066,14 @@ class RewardedInterstitialAdManager {
       request: const AdRequest(),
       rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
         onAdLoaded: (ad) {
-          _ad = ad;
           _isLoading = false;
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              _ad = null;
               onClosed();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
-              _ad = null;
               onFailed();
             },
           );
@@ -1086,7 +1082,6 @@ class RewardedInterstitialAdManager {
           });
         },
         onAdFailedToLoad: (error) {
-          _ad = null;
           _isLoading = false;
           onFailed();
         },
@@ -1132,7 +1127,7 @@ Future<void> setupNotifications(Function(int) onSelectTab) async {
     iOS: initializationSettingsIOS,
   );
   await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
+    settings: initializationSettings,
     onDidReceiveNotificationResponse: (details) {
       if (details.payload == 'today') {
         onSelectTab(0);
@@ -1148,11 +1143,11 @@ Future<void> setupNotifications(Function(int) onSelectTab) async {
 
 Future<void> scheduleDailyNotification(int hour, int minute, String title, String body, String payload) async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
-    hour * 100 + minute, // unique id
-    title,
-    body,
-    _nextInstanceOfTime(hour, minute),
-    const NotificationDetails(
+    id: hour * 100 + minute,
+    title: title,
+    body: body,
+    scheduledDate: _nextInstanceOfTime(hour, minute),
+    notificationDetails: const NotificationDetails(
       android: AndroidNotificationDetails('tarihx_channel', 'TarihX Bildirimleri', importance: Importance.max, priority: Priority.high),
       iOS: DarwinNotificationDetails(),
     ),
@@ -1172,6 +1167,6 @@ tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
 }
 
 Future<void> setupTimezone() async {
-  final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneName));
+  final timezoneInfo = await FlutterTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timezoneInfo.identifier));
 }
