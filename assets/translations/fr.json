@@ -10,6 +10,8 @@
   "notifications": "Notifications",
   "notifications_on": "Notifications activées",
   "notifications_off": "Notifications désactivées",
+  "daily_notifications_on": "Notifications quotidiennes activées",
+  "daily_notifications_off": "Notifications quotidiennes désactivées",
   "notification_time": "Heure de Notification",
   "language": "Langue",
   "account": "Compte",
@@ -20,6 +22,7 @@
   "light": "Clair",
   "dark": "Sombre",
   "ai_explanation": "Explication IA",
+  "get_ai_explanation": "Obtenir l'explication IA",
   "ai_explanation_error": "L'explication IA n'a pas pu être récupérée : {0}",
   "ai_explanation_not_found": "Explication IA introuvable.",
   "ai_explanation_api_error": "L'explication IA n'a pas pu être récupérée (Erreur : {0} - {1})",
@@ -27,5 +30,10 @@
   "notification_today_title": "Que s'est-il passé aujourd'hui dans l'histoire ?",
   "notification_today_body": "Appuyez pour voir les événements historiques d'aujourd'hui.",
   "notification_tomorrow_title": "Que s'est-il passé demain dans l'histoire ?",
-  "notification_tomorrow_body": "Appuyez pour voir les événements historiques de demain."
+  "notification_tomorrow_body": "Appuyez pour voir les événements historiques de demain.",
+  "legal_info": "Mentions Légales & Informations",
+  "privacy_policy": "Politique de Confidentialité",
+  "terms_of_use": "Conditions d'Utilisation",
+  "about_app": "À propos de l'application",
+  "app_version": "Version 2.0.0"
 } 

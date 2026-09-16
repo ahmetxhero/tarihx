@@ -10,12 +10,19 @@
   "notifications": "Сповіщення",
   "notifications_on": "Сповіщення увімкнено",
   "notifications_off": "Сповіщення вимкнено",
+  "daily_notifications_on": "Щоденні сповіщення увімкнено",
+  "daily_notifications_off": "Щоденні сповіщення вимкнено",
   "notification_time": "Час Сповіщень",
   "language": "Мова",
+  "account": "Обліковий запис",
+  "sign_in_with_google": "Увійти через Google",
+  "sign_in_with_apple": "Увійти через Apple",
+  "sign_out": "Вийти",
   "system": "Система",
   "light": "Світлий",
   "dark": "Темний",
   "ai_explanation": "Пояснення ШІ",
+  "get_ai_explanation": "Отримати пояснення ШІ",
   "ai_explanation_error": "Не вдалося отримати пояснення ШІ: {0}",
   "ai_explanation_not_found": "Пояснення ШІ не знайдено.",
   "ai_explanation_api_error": "Не вдалося отримати пояснення ШІ (Помилка: {0} - {1})",
@@ -23,5 +30,10 @@
   "notification_today_title": "Що сталося сьогодні в історії?",
   "notification_today_body": "Натисніть, щоб побачити сьогоднішні історичні події.",
   "notification_tomorrow_title": "Що сталося завтра в історії?",
-  "notification_tomorrow_body": "Натисніть, щоб побачити завтрашні історичні події."
-} 
+  "notification_tomorrow_body": "Натисніть, щоб побачити завтрашні історичні події.",
+  "legal_info": "Правова інформація",
+  "privacy_policy": "Політика конфіденційності",
+  "terms_of_use": "Умови використання",
+  "about_app": "Про додаток",
+  "app_version": "Версія 2.0.0"
+}

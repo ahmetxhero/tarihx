@@ -1,1 +1,2 @@
-CFBundleDisplayName = "历史 X"; 
+CFBundleDisplayName = "历史 X";
+NSUserNotificationUsageDescription = "我们需要您的许可来发送每日通知。";

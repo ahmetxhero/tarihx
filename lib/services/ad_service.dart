@@ -4,67 +4,156 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdService {
+  /// Global flag to prevent App Open Ad from firing right after closing another full-screen ad
+  static bool isShowingFullScreenAd = false;
+
+  static void markFullScreenAdClosed() {
+    isShowingFullScreenAd = true;
+    Future.delayed(const Duration(seconds: 2), () {
+      isShowingFullScreenAd = false;
+    });
+  }
+
+  // Banner Ad Unit ID
   static String get bannerAdUnitIdAndroid => dotenv.env['BANNER_AD_UNIT_ID_ANDROID'] ?? '';
   static String get bannerAdUnitIdIOS => dotenv.env['BANNER_AD_UNIT_ID_IOS'] ?? '';
   static String get bannerAdUnitId => Platform.isAndroid ? bannerAdUnitIdAndroid : bannerAdUnitIdIOS;
 
-  static String get interstitialAdUnitIdAndroid => dotenv.env['INTERSTITIAL_AD_UNIT_ID_ANDROID'] ?? '';
-  static String get interstitialAdUnitIdIOS => dotenv.env['INTERSTITIAL_AD_UNIT_ID_IOS'] ?? '';
-  static String get interstitialAdUnitId => Platform.isAndroid ? interstitialAdUnitIdAndroid : interstitialAdUnitIdIOS;
+  // Interstitial / Rewarded Interstitial Ad Unit ID
+  static String get rewardedInterstitialAdUnitIdAndroid => dotenv.env['REWARDED_INTERSTITIAL_AD_UNIT_ID_ANDROID'] ?? '';
+  static String get rewardedInterstitialAdUnitIdIOS => dotenv.env['REWARDED_INTERSTITIAL_AD_UNIT_ID_IOS'] ?? '';
+  static String get rewardedInterstitialAdUnitId => Platform.isAndroid ? rewardedInterstitialAdUnitIdAndroid : rewardedInterstitialAdUnitIdIOS;
+  static String get interstitialAdUnitId => rewardedInterstitialAdUnitId;
 
-  static String get testRewardedInterstitialAdUnitIdAndroid => dotenv.env['REWARDED_INTERSTITIAL_AD_UNIT_ID_ANDROID'] ?? '';
-  static String get testRewardedInterstitialAdUnitIdIOS => dotenv.env['REWARDED_INTERSTITIAL_AD_UNIT_ID_IOS'] ?? '';
-  static String get rewardedInterstitialAdUnitId => Platform.isAndroid ? testRewardedInterstitialAdUnitIdAndroid : testRewardedInterstitialAdUnitIdIOS;
+  // Rewarded Ad Unit ID
+  static String get rewardedAdUnitIdAndroid => dotenv.env['REWARDED_AD_UNIT_ID_ANDROID'] ?? '';
+  static String get rewardedAdUnitIdIOS => dotenv.env['REWARDED_AD_UNIT_ID_IOS'] ?? '';
+  static String get rewardedAdUnitId => Platform.isAndroid ? rewardedAdUnitIdAndroid : rewardedAdUnitIdIOS;
+
+  // App Open Ad Unit ID
+  static String get appOpenAdUnitIdAndroid => dotenv.env['APP_OPEN_AD_UNIT_ID_ANDROID'] ?? '';
+  static String get appOpenAdUnitIdIOS => dotenv.env['APP_OPEN_AD_UNIT_ID_IOS'] ?? '';
+  static String get appOpenAdUnitId => Platform.isAndroid ? appOpenAdUnitIdAndroid : appOpenAdUnitIdIOS;
 }
 
 class InterstitialAdManager {
-  static InterstitialAd? _ad;
-  static bool _isLoading = false;
-
   static void loadAd(VoidCallback? onLoaded) {
-    if (_ad != null || _isLoading) return;
-    _isLoading = true;
-    InterstitialAd.load(
-      adUnitId: AdService.interstitialAdUnitId,
+    onLoaded?.call();
+  }
+
+  static void showAd(VoidCallback onClosed) {
+    onClosed();
+  }
+}
+
+/// App Open Ad Manager
+class AppOpenAdManager {
+  static AppOpenAd? _appOpenAd;
+  static bool _isShowingAd = false;
+  static DateTime? _appOpenLoadTime;
+
+  static void loadAd() {
+    final adUnitId = AdService.appOpenAdUnitId;
+    if (adUnitId.isEmpty) return;
+
+    AppOpenAd.load(
+      adUnitId: adUnitId,
       request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
+      adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
-          _ad = ad;
-          _isLoading = false;
-          onLoaded?.call();
+          _appOpenAd = ad;
+          _appOpenLoadTime = DateTime.now();
+          debugPrint('AppOpenAd loaded successfully.');
         },
         onAdFailedToLoad: (error) {
-          _ad = null;
-          _isLoading = false;
-          onLoaded?.call();
+          debugPrint('AppOpenAd failed to load: $error');
+          _appOpenAd = null;
         },
       ),
     );
   }
 
-  static void showAd(VoidCallback onClosed) {
-    if (_ad == null) {
-      onClosed();
+  static bool get _isAdAvailable {
+    return _appOpenAd != null &&
+        _appOpenLoadTime != null &&
+        DateTime.now().difference(_appOpenLoadTime!).inHours < 4;
+  }
+
+  static void showAdIfAvailable() {
+    // If a full screen ad was recently shown or is currently active, do not display App Open Ad
+    if (AdService.isShowingFullScreenAd) {
+      debugPrint('AppOpenAd skipped because another full screen ad was active.');
       return;
     }
-    _ad!.fullScreenContentCallback = FullScreenContentCallback(
+    if (!_isAdAvailable) {
+      loadAd();
+      return;
+    }
+    if (_isShowingAd) return;
+
+    _appOpenAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (ad) {
+        _isShowingAd = true;
+      },
       onAdDismissedFullScreenContent: (ad) {
+        _isShowingAd = false;
         ad.dispose();
-        _ad = null;
-        loadAd(null);
-        onClosed();
+        _appOpenAd = null;
+        loadAd();
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
+        _isShowingAd = false;
         ad.dispose();
-        _ad = null;
-        loadAd(null);
-        onClosed();
+        _appOpenAd = null;
+        loadAd();
       },
     );
-    _ad!.show();
+    _appOpenAd!.show();
   }
 }
 
+/// Standard Rewarded Ad Manager
+class RewardedAdManager {
+  static bool _isLoading = false;
+
+  static void loadAd({required VoidCallback onRewarded, required VoidCallback onClosed, required VoidCallback onFailed}) {
+    if (_isLoading) return;
+    _isLoading = true;
+    RewardedAd.load(
+      adUnitId: AdService.rewardedAdUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _isLoading = false;
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdShowedFullScreenContent: (ad) {
+              AdService.isShowingFullScreenAd = true;
+            },
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+              AdService.markFullScreenAdClosed();
+              onClosed();
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              ad.dispose();
+              AdService.markFullScreenAdClosed();
+              onFailed();
+            },
+          );
+          ad.show(onUserEarnedReward: (ad, reward) {
+            onRewarded();
+          });
+        },
+        onAdFailedToLoad: (error) {
+          _isLoading = false;
+          onFailed();
+        },
+      ),
+    );
+  }
+}
+
+/// Rewarded Interstitial Ad Manager
 class RewardedInterstitialAdManager {
   static bool _isLoading = false;
 
@@ -78,12 +167,17 @@ class RewardedInterstitialAdManager {
         onAdLoaded: (ad) {
           _isLoading = false;
           ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdShowedFullScreenContent: (ad) {
+              AdService.isShowingFullScreenAd = true;
+            },
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
+              AdService.markFullScreenAdClosed();
               onClosed();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
+              AdService.markFullScreenAdClosed();
               onFailed();
             },
           );

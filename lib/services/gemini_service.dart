@@ -7,7 +7,16 @@ class GeminiService {
   static String get _apiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
   static Future<String> fetchExplanation(String text, String lang) async {
-    final url = Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent');
+    final apiKey = _apiKey;
+    if (apiKey.isEmpty) {
+      return tr('ai_explanation_not_found');
+    }
+
+    final models = [
+      'gemini-3.6-flash',
+      'gemini-2.5-flash',
+      'gemini-1.5-pro',
+    ];
 
     String prompt;
     switch (lang) {
@@ -52,27 +61,39 @@ class GeminiService {
       ]
     };
 
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "X-goog-api-key": _apiKey,
-      },
-      body: json.encode(body),
-    );
+    String lastErrorMessage = '';
+    int lastStatusCode = 500;
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final candidates = data['candidates'] as List?;
-      if (candidates != null && candidates.isNotEmpty) {
-        final parts = candidates[0]['content']['parts'] as List?;
-        if (parts != null && parts.isNotEmpty) {
-          return parts[0]['text'] ?? '';
+    for (final model in models) {
+      final url = Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey');
+      try {
+        final response = await http.post(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+            "X-goog-api-key": apiKey,
+          },
+          body: json.encode(body),
+        );
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          final candidates = data['candidates'] as List?;
+          if (candidates != null && candidates.isNotEmpty) {
+            final parts = candidates[0]['content']['parts'] as List?;
+            if (parts != null && parts.isNotEmpty) {
+              return parts[0]['text'] ?? '';
+            }
+          }
+        } else {
+          lastStatusCode = response.statusCode;
+          lastErrorMessage = response.body;
         }
+      } catch (e) {
+        lastErrorMessage = e.toString();
       }
-      return tr('ai_explanation_not_found');
-    } else {
-      return tr('ai_explanation_api_error', args: [response.statusCode.toString(), response.body.toString()]);
     }
+
+    return tr('ai_explanation_api_error', args: [lastStatusCode.toString(), lastErrorMessage]);
   }
 }

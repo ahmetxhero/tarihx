@@ -16,10 +16,54 @@ class WikiEventDetailPage extends StatefulWidget {
 }
 
 class _WikiEventDetailPageState extends State<WikiEventDetailPage> {
+  bool _requestedAi = false;
+  bool _isLoadingAi = false;
+  String? _aiExplanationText;
+  String? _aiError;
+
   @override
   void initState() {
     super.initState();
     InterstitialAdManager.loadAd(null);
+  }
+
+  void _onFetchAiPressed(String lang) {
+    if (_isLoadingAi || _requestedAi) return;
+
+    setState(() {
+      _requestedAi = true;
+      _isLoadingAi = true;
+      _aiError = null;
+    });
+
+    // Start fetching AI content in background in parallel
+    final aiFuture = GeminiService.fetchExplanation(widget.event.text, lang);
+
+    // Show Video Interstitial / Rewarded Ad while AI is preparing
+    RewardedInterstitialAdManager.loadAd(
+      onRewarded: () {},
+      onClosed: () => _handleAiResult(aiFuture),
+      onFailed: () => _handleAiResult(aiFuture),
+    );
+  }
+
+  Future<void> _handleAiResult(Future<String> aiFuture) async {
+    try {
+      final result = await aiFuture;
+      if (mounted) {
+        setState(() {
+          _aiExplanationText = result;
+          _isLoadingAi = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _aiError = e.toString();
+          _isLoadingAi = false;
+        });
+      }
+    }
   }
 
   @override
@@ -167,30 +211,56 @@ class _WikiEventDetailPageState extends State<WikiEventDetailPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  FutureBuilder<String>(
-                    future: GeminiService.fetchExplanation(event.text, lang),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
+                  if (!_requestedAi)
+                    Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _onFetchAiPressed(lang),
+                        icon: const Icon(Icons.play_circle_fill_rounded, size: 22),
+                        label: Text(
+                          tr('get_ai_explanation'),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDark ? const Color(0xFF3B82F6) : const Color(0xFF2563EB),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          elevation: 2,
+                        ),
+                      ),
+                    )
+                  else if (_isLoadingAi)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: 28,
+                              height: 28,
                               child: CircularProgressIndicator(strokeWidth: 2.5),
                             ),
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text(
-                          tr('ai_explanation_error', args: [snapshot.error.toString()]),
-                          style: TextStyle(color: Theme.of(context).colorScheme.error),
-                        );
-                      } else {
-                        return parseBoldMarkdown(snapshot.data ?? '', context);
-                      }
-                    },
-                  ),
+                            SizedBox(height: 12),
+                            Text(
+                              'Yapay zeka açıklaması hazırlanıyor...',
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else if (_aiError != null)
+                    Text(
+                      tr('ai_explanation_error', args: [_aiError!]),
+                      style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    )
+                  else
+                    parseBoldMarkdown(_aiExplanationText ?? tr('ai_explanation_not_found'), context),
                 ],
               ),
             ),

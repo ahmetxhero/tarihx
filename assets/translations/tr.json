@@ -9,6 +9,8 @@
   "notifications": "Bildirimler",
   "notifications_on": "Bildirimler açık",
   "notifications_off": "Bildirimler kapalı",
+  "daily_notifications_on": "Günlük bildirimler açık",
+  "daily_notifications_off": "Günlük bildirimler kapalı",
   "notification_time": "Bildirim Saati",
   "language": "Dil",
   "account": "Hesap",
@@ -20,6 +22,7 @@
   "light": "Açık",
   "dark": "Koyu",
   "ai_explanation": "Yapay Zeka Açıklaması",
+  "get_ai_explanation": "Yapay Zeka Açıklamasını Al",
   "ai_explanation_error": "Yapay zeka açıklaması alınamadı: {0}",
   "ai_explanation_not_found": "Yapay zeka açıklaması bulunamadı.",
   "ai_explanation_api_error": "Yapay zeka açıklaması alınamadı (Hata: {0} - {1})",
@@ -27,5 +30,10 @@
   "notification_today_title": "Tarihte Bugün Ne Oldu?",
   "notification_today_body": "Bugünün tarihiyle ilgili olayları görmek için tıkla.",
   "notification_tomorrow_title": "Tarihte Yarın Ne Oldu?",
-  "notification_tomorrow_body": "Yarının tarihiyle ilgili olayları görmek için tıkla."
+  "notification_tomorrow_body": "Yarının tarihiyle ilgili olayları görmek için tıkla.",
+  "legal_info": "Yasal & Bilgi",
+  "privacy_policy": "Gizlilik Politikası",
+  "terms_of_use": "Kullanım Şartları",
+  "about_app": "Uygulama Hakkında",
+  "app_version": "Sürüm 2.0.0"
 } 

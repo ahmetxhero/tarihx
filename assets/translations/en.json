@@ -9,6 +9,8 @@
   "notifications": "Notifications",
   "notifications_on": "Notifications on",
   "notifications_off": "Notifications off",
+  "daily_notifications_on": "Daily notifications on",
+  "daily_notifications_off": "Daily notifications off",
   "notification_time": "Notification Time",
   "language": "Language",
   "account": "Account",
@@ -20,6 +22,7 @@
   "light": "Light",
   "dark": "Dark",
   "ai_explanation": "AI Explanation",
+  "get_ai_explanation": "Get AI Explanation",
   "ai_explanation_error": "AI explanation could not be retrieved: {0}",
   "ai_explanation_not_found": "AI explanation not found.",
   "ai_explanation_api_error": "AI explanation could not be retrieved (Error: {0} - {1})",
@@ -27,5 +30,10 @@
   "notification_today_title": "What Happened Today in History?",
   "notification_today_body": "Tap to see today's historical events.",
   "notification_tomorrow_title": "What Happened Tomorrow in History?",
-  "notification_tomorrow_body": "Tap to see tomorrow's historical events."
+  "notification_tomorrow_body": "Tap to see tomorrow's historical events.",
+  "legal_info": "Legal & Information",
+  "privacy_policy": "Privacy Policy",
+  "terms_of_use": "Terms of Use",
+  "about_app": "About App",
+  "app_version": "Version 2.0.0"
 } 

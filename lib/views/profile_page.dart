@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../core/constants/legal_texts.dart';
 import '../presenters/profile_presenter.dart';
 import '../services/auth_service.dart';
+import 'legal_detail_page.dart';
 import 'widgets/auth_icons.dart';
 import 'widgets/language_dropdown.dart';
 import 'widgets/theme_mode_selector.dart';
@@ -13,6 +15,8 @@ class ProfilePage extends StatefulWidget {
   final ValueChanged<ThemeMode> onThemeModeChanged;
   final bool notificationsEnabled;
   final ValueChanged<bool> onNotificationsChanged;
+  final bool localNotificationsEnabled;
+  final ValueChanged<bool> onLocalNotificationsChanged;
   final TimeOfDay notificationTime;
   final ValueChanged<TimeOfDay> onNotificationTimeChanged;
 
@@ -22,6 +26,8 @@ class ProfilePage extends StatefulWidget {
     required this.onThemeModeChanged,
     required this.notificationsEnabled,
     required this.onNotificationsChanged,
+    required this.localNotificationsEnabled,
+    required this.onLocalNotificationsChanged,
     required this.notificationTime,
     required this.onNotificationTimeChanged,
   });
@@ -44,11 +50,15 @@ class _ProfilePageState extends State<ProfilePage> implements ProfileView {
   void onSettingsLoaded({
     required ThemeMode themeMode,
     required bool notificationsEnabled,
+    required bool localNotificationsEnabled,
     required TimeOfDay notificationTime,
   }) {}
 
   @override
   void onNotificationStatusChanged(bool enabled) {}
+
+  @override
+  void onLocalNotificationStatusChanged(bool enabled) {}
 
   @override
   void onNotificationTimeChanged(TimeOfDay time) {}
@@ -96,9 +106,12 @@ class _ProfilePageState extends State<ProfilePage> implements ProfileView {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+    return SafeArea(
+      bottom: false,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 130),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 500),
           decoration: BoxDecoration(
@@ -206,6 +219,7 @@ class _ProfilePageState extends State<ProfilePage> implements ProfileView {
                   ),
                 ),
                 const SizedBox(height: 10),
+                // FCM Push Notifications Toggle
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   decoration: BoxDecoration(
@@ -237,7 +251,40 @@ class _ProfilePageState extends State<ProfilePage> implements ProfileView {
                     ],
                   ),
                 ),
-                if (widget.notificationsEnabled) ...[
+                const SizedBox(height: 10),
+                // Local Daily Notifications Toggle
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1B1E2B) : const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: isDark ? const Color(0xFF2A2E40) : const Color(0xFFE2E8F0)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.schedule_rounded,
+                        color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          widget.localNotificationsEnabled ? tr('daily_notifications_on') : tr('daily_notifications_off'),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.5,
+                            color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                          ),
+                        ),
+                      ),
+                      Switch(
+                        value: widget.localNotificationsEnabled,
+                        onChanged: widget.onLocalNotificationsChanged,
+                      ),
+                    ],
+                  ),
+                ),
+                if (widget.localNotificationsEnabled) ...[
                   const SizedBox(height: 10),
                   Material(
                     color: Colors.transparent,
@@ -333,11 +380,111 @@ class _ProfilePageState extends State<ProfilePage> implements ProfileView {
                 ),
                 const SizedBox(height: 10),
                 const LanguageDropdown(),
+
+                const SizedBox(height: 24),
+                Divider(height: 1, color: isDark ? const Color(0xFF222533) : const Color(0xFFE2E8F0)),
+                const SizedBox(height: 20),
+
+                // Legal & Information Section
+                Text(
+                  tr('legal_info'),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Material(
+                  color: isDark ? const Color(0xFF1B1E2B) : const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(16),
+                  clipBehavior: Clip.antiAlias,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: isDark ? const Color(0xFF2A2E40) : const Color(0xFFE2E8F0)),
+                    ),
+                    child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.shield_outlined, color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB)),
+                        title: Text(
+                          tr('privacy_policy'),
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                          ),
+                        ),
+                        trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+                        onTap: () {
+                          final lang = context.locale.languageCode;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LegalDetailPage(
+                                title: tr('privacy_policy'),
+                                content: LegalTexts.getPrivacyPolicy(lang),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      Divider(height: 1, indent: 16, endIndent: 16, color: isDark ? const Color(0xFF2A2E40) : const Color(0xFFE2E8F0)),
+                      ListTile(
+                        leading: Icon(Icons.description_outlined, color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB)),
+                        title: Text(
+                          tr('terms_of_use'),
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                          ),
+                        ),
+                        trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+                        onTap: () {
+                          final lang = context.locale.languageCode;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LegalDetailPage(
+                                title: tr('terms_of_use'),
+                                content: LegalTexts.getTermsOfUse(lang),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      Divider(height: 1, indent: 16, endIndent: 16, color: isDark ? const Color(0xFF2A2E40) : const Color(0xFFE2E8F0)),
+                      ListTile(
+                        leading: Icon(Icons.info_outline_rounded, color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)),
+                        title: Text(
+                          tr('about_app'),
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                          ),
+                        ),
+                        trailing: Text(
+                          tr('app_version'),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               ],
             ),
           ),
         ),
       ),
+    ),
     );
   }
 

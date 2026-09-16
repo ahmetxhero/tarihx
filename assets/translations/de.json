@@ -9,6 +9,8 @@
   "notifications": "Benachrichtigungen",
   "notifications_on": "Benachrichtigungen an",
   "notifications_off": "Benachrichtigungen aus",
+  "daily_notifications_on": "Tägliche Benachrichtigungen an",
+  "daily_notifications_off": "Tägliche Benachrichtigungen aus",
   "notification_time": "Benachrichtigungszeit",
   "language": "Sprache",
   "account": "Konto",
@@ -20,6 +22,7 @@
   "light": "Hell",
   "dark": "Dunkel",
   "ai_explanation": "KI-Erklärung",
+  "get_ai_explanation": "KI-Erklärung abrufen",
   "ai_explanation_error": "KI-Erklärung konnte nicht abgerufen werden: {0}",
   "ai_explanation_not_found": "KI-Erklärung nicht gefunden.",
   "ai_explanation_api_error": "KI-Erklärung konnte nicht abgerufen werden (Fehler: {0} - {1})",
@@ -27,5 +30,10 @@
   "notification_today_title": "Was geschah heute in der Geschichte?",
   "notification_today_body": "Tippen Sie, um die heutigen historischen Ereignisse zu sehen.",
   "notification_tomorrow_title": "Was geschah morgen in der Geschichte?",
-  "notification_tomorrow_body": "Tippen Sie, um die historischen Ereignisse von morgen zu sehen."
+  "notification_tomorrow_body": "Tippen Sie, um die historischen Ereignisse von morgen zu sehen.",
+  "legal_info": "Rechtliches & Information",
+  "privacy_policy": "Datenschutzerklärung",
+  "terms_of_use": "Nutzungsbedingungen",
+  "about_app": "Über die App",
+  "app_version": "Version 2.0.0"
 } 

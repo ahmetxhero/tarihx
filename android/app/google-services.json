@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "80353237986-dbk5fmhk14lcq50vjs18r4kjvsodp9k6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.web.tarihx",
+            "certificate_hash": "3d0addc81b24e7aca4ac8f71c6073211b348981f"
+          }
+        },
+        {
+          "client_id": "80353237986-f74sdld6vh89l11kd3jiutnsl86or332.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.web.tarihx",
+            "certificate_hash": "cc2efbb4a0a6859c9fb602bd0cff32c3eac3f233"
+          }
+        },
+        {
           "client_id": "80353237986-8d82o6sp79777ehk68950mm2kchpacdu.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -3,8 +3,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class BannerAdWidget extends StatefulWidget {
   final String adUnitId;
-  final AdSize adSize;
-  const BannerAdWidget({super.key, required this.adUnitId, this.adSize = AdSize.banner});
+  const BannerAdWidget({super.key, required this.adUnitId});
 
   @override
   State<BannerAdWidget> createState() => _BannerAdWidgetState();
@@ -13,18 +12,50 @@ class BannerAdWidget extends StatefulWidget {
 class _BannerAdWidgetState extends State<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
+  AdSize? _adSize;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_bannerAd == null) {
+      _loadAdaptiveBanner();
+    }
+  }
+
+  void _loadAdaptiveBanner() async {
+    if (widget.adUnitId.isEmpty) return;
+
+    final mediaWidth = MediaQuery.of(context).size.width.truncate() - 32;
+    final width = mediaWidth > 0 ? mediaWidth : 320;
+    final adSize = await AdSize.getLargeAnchoredAdaptiveBannerAdSizeWithOrientation(Orientation.portrait, width) ?? AdSize.banner;
+
+    if (!mounted) return;
+
+    setState(() {
+      _adSize = adSize;
+    });
+
     _bannerAd = BannerAd(
       adUnitId: widget.adUnitId,
-      size: widget.adSize,
+      size: adSize,
       request: const AdRequest(),
       listener: BannerAdListener(
-        onAdLoaded: (ad) => setState(() => _isLoaded = true),
-        onAdFailedToLoad: (ad, error) {
+        onAdLoaded: (Ad ad) {
+          if (mounted) {
+            setState(() {
+              _isLoaded = true;
+            });
+          }
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          debugPrint('Banner Ad failed to load: $error');
           ad.dispose();
+          if (mounted) {
+            setState(() {
+              _bannerAd = null;
+              _isLoaded = false;
+            });
+          }
         },
       ),
     )..load();
@@ -38,13 +69,14 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isLoaded) return const SizedBox(height: 50);
-    return Center(
-      child: SizedBox(
-        width: _bannerAd!.size.width.toDouble(),
-        height: _bannerAd!.size.height.toDouble(),
-        child: AdWidget(ad: _bannerAd!),
-      ),
+    if (!_isLoaded || _bannerAd == null || _adSize == null) {
+      return const SizedBox(height: 50);
+    }
+    return Container(
+      alignment: Alignment.center,
+      width: _adSize!.width.toDouble(),
+      height: _adSize!.height.toDouble(),
+      child: AdWidget(ad: _bannerAd!),
     );
   }
 }

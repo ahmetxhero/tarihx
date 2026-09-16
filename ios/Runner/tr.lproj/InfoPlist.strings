@@ -1,1 +1,2 @@
-CFBundleDisplayName = "Tarih X"; 
+CFBundleDisplayName = "Tarih X";
+NSUserNotificationUsageDescription = "Günlük bildirimler gönderebilmek için izninize ihtiyacımız var.";

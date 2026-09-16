@@ -10,6 +10,8 @@
   "notifications": "Notificaciones",
   "notifications_on": "Notificaciones activadas",
   "notifications_off": "Notificaciones desactivadas",
+  "daily_notifications_on": "Notificaciones diarias activadas",
+  "daily_notifications_off": "Notificaciones diarias desactivadas",
   "notification_time": "Hora de Notificación",
   "language": "Idioma",
   "account": "Cuenta",
@@ -20,6 +22,7 @@
   "light": "Claro",
   "dark": "Oscuro",
   "ai_explanation": "Explicación de IA",
+  "get_ai_explanation": "Obtener explicación de IA",
   "ai_explanation_error": "No se pudo obtener la explicación de IA: {0}",
   "ai_explanation_not_found": "No se encontró explicación de IA.",
   "ai_explanation_api_error": "No se pudo obtener la explicación de IA (Error: {0} - {1})",
@@ -27,5 +30,10 @@
   "notification_today_title": "¿Qué pasó hoy en la historia?",
   "notification_today_body": "Toca para ver los eventos históricos de hoy.",
   "notification_tomorrow_title": "¿Qué pasó mañana en la historia?",
-  "notification_tomorrow_body": "Toca para ver los eventos históricos de mañana."
+  "notification_tomorrow_body": "Toca para ver los eventos históricos de mañana.",
+  "legal_info": "Legal e Información",
+  "privacy_policy": "Política de Privacidad",
+  "terms_of_use": "Términos de Uso",
+  "about_app": "Acerca de la Aplicación",
+  "app_version": "Versión 2.0.0"
 } 

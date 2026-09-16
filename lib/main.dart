@@ -11,6 +11,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'core/theme/app_theme.dart';
 import 'presenters/profile_presenter.dart';
+import 'services/ad_service.dart';
+import 'services/analytics_service.dart';
 import 'services/notification_service.dart';
 import 'views/main_screen.dart';
 
@@ -28,6 +30,7 @@ void main() async {
     RequestConfiguration(testDeviceIds: ['4d857f2cc42f85b06387ad053af79a68']),
   );
   await EasyLocalization.ensureInitialized();
+  await NotificationService.requestInitialPermissions();
   await NotificationService.setupTimezone();
 
   runApp(
@@ -39,8 +42,11 @@ void main() async {
         Locale('fr'),
         Locale('es'),
         Locale('it'),
+        Locale('pt'),
         Locale('ru'),
         Locale('uk'),
+        Locale('sv'),
+        Locale('ar'),
         Locale('zh'),
       ],
       path: 'assets/translations',
@@ -57,33 +63,59 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> implements ProfileView {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver implements ProfileView {
   late final ProfilePresenter _presenter;
   ThemeMode _themeMode = ThemeMode.system;
   bool _notificationsEnabled = true;
+  bool _localNotificationsEnabled = true;
   TimeOfDay _notificationTime = const TimeOfDay(hour: 10, minute: 0);
   int _selectedTab = 0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    AppOpenAdManager.loadAd();
+
     _presenter = ProfilePresenter(this);
     _presenter.loadSettings((tab) {
       setState(() {
         _selectedTab = tab;
       });
     });
+    NotificationService.initFCM((tab) {
+      if (mounted) {
+        setState(() {
+          _selectedTab = tab;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      AppOpenAdManager.showAdIfAvailable();
+    }
   }
 
   @override
   void onSettingsLoaded({
     required ThemeMode themeMode,
     required bool notificationsEnabled,
+    required bool localNotificationsEnabled,
     required TimeOfDay notificationTime,
   }) {
     setState(() {
       _themeMode = themeMode;
       _notificationsEnabled = notificationsEnabled;
+      _localNotificationsEnabled = localNotificationsEnabled;
       _notificationTime = notificationTime;
     });
   }
@@ -92,6 +124,13 @@ class _MyAppState extends State<MyApp> implements ProfileView {
   void onNotificationStatusChanged(bool enabled) {
     setState(() {
       _notificationsEnabled = enabled;
+    });
+  }
+
+  @override
+  void onLocalNotificationStatusChanged(bool enabled) {
+    setState(() {
+      _localNotificationsEnabled = enabled;
     });
   }
 
@@ -123,7 +162,11 @@ class _MyAppState extends State<MyApp> implements ProfileView {
   }
 
   void setNotificationsEnabled(bool enabled) async {
-    await _presenter.setNotificationsEnabled(
+    await _presenter.setNotificationsEnabled(enabled: enabled);
+  }
+
+  void setLocalNotificationsEnabled(bool enabled) async {
+    await _presenter.setLocalNotificationsEnabled(
       enabled: enabled,
       currentTime: _notificationTime,
       onSelectTab: (tab) => setState(() => _selectedTab = tab),
@@ -133,7 +176,7 @@ class _MyAppState extends State<MyApp> implements ProfileView {
   void setNotificationTime(TimeOfDay time) async {
     await _presenter.setNotificationTime(
       time: time,
-      notificationsEnabled: _notificationsEnabled,
+      localNotificationsEnabled: _localNotificationsEnabled,
       onSelectTab: (tab) => setState(() => _selectedTab = tab),
     );
   }
@@ -149,11 +192,14 @@ class _MyAppState extends State<MyApp> implements ProfileView {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
+      navigatorObservers: [AnalyticsService.observer],
       home: MainScreen(
         themeMode: _themeMode,
         onThemeModeChanged: setThemeMode,
         notificationsEnabled: _notificationsEnabled,
         onNotificationsChanged: setNotificationsEnabled,
+        localNotificationsEnabled: _localNotificationsEnabled,
+        onLocalNotificationsChanged: setLocalNotificationsEnabled,
         notificationTime: _notificationTime,
         onNotificationTimeChanged: setNotificationTime,
         selectedTab: _selectedTab,

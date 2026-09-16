@@ -10,6 +10,8 @@ class MainScreen extends StatefulWidget {
   final ValueChanged<ThemeMode> onThemeModeChanged;
   final bool notificationsEnabled;
   final ValueChanged<bool> onNotificationsChanged;
+  final bool localNotificationsEnabled;
+  final ValueChanged<bool> onLocalNotificationsChanged;
   final TimeOfDay notificationTime;
   final ValueChanged<TimeOfDay> onNotificationTimeChanged;
   final int selectedTab;
@@ -21,6 +23,8 @@ class MainScreen extends StatefulWidget {
     required this.onThemeModeChanged,
     required this.notificationsEnabled,
     required this.onNotificationsChanged,
+    required this.localNotificationsEnabled,
+    required this.onLocalNotificationsChanged,
     required this.notificationTime,
     required this.onNotificationTimeChanged,
     this.selectedTab = 0,
@@ -43,6 +47,8 @@ class _MainScreenState extends State<MainScreen> {
         onThemeModeChanged: widget.onThemeModeChanged,
         notificationsEnabled: widget.notificationsEnabled,
         onNotificationsChanged: widget.onNotificationsChanged,
+        localNotificationsEnabled: widget.localNotificationsEnabled,
+        onLocalNotificationsChanged: widget.onLocalNotificationsChanged,
         notificationTime: widget.notificationTime,
         onNotificationTimeChanged: widget.onNotificationTimeChanged,
       ),

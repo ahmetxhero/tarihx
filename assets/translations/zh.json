@@ -10,12 +10,19 @@
   "notifications": "通知",
   "notifications_on": "通知已开启",
   "notifications_off": "通知已关闭",
+  "daily_notifications_on": "每日通知已开启",
+  "daily_notifications_off": "每日通知已关闭",
   "notification_time": "通知时间",
   "language": "语言",
+  "account": "账户",
+  "sign_in_with_google": "使用 Google 登录",
+  "sign_in_with_apple": "使用 Apple 登录",
+  "sign_out": "退出登录",
   "system": "系统",
   "light": "浅色",
   "dark": "深色",
   "ai_explanation": "AI 说明",
+  "get_ai_explanation": "获取 AI 说明",
   "ai_explanation_error": "无法获取AI说明: {0}",
   "ai_explanation_not_found": "未找到AI说明。",
   "ai_explanation_api_error": "无法获取AI说明（错误: {0} - {1}）",
@@ -23,5 +30,10 @@
   "notification_today_title": "历史上的今天发生了什么？",
   "notification_today_body": "点击查看今天的历史事件。",
   "notification_tomorrow_title": "历史上的明天发生了什么？",
-  "notification_tomorrow_body": "点击查看明天的历史事件。"
-} 
+  "notification_tomorrow_body": "点击查看明天的历史事件。",
+  "legal_info": "法律与信息",
+  "privacy_policy": "隐私政策",
+  "terms_of_use": "使用条款",
+  "about_app": "关于应用",
+  "app_version": "版本 2.0.0"
+}

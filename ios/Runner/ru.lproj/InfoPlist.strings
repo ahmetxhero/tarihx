@@ -1,1 +1,2 @@
-CFBundleDisplayName = "История X"; 
+CFBundleDisplayName = "История X";
+NSUserNotificationUsageDescription = "Нам требуется ваше разрешение для отправки ежедневных уведомлений.";

@@ -19,7 +19,10 @@ final List<LanguageOption> languageOptions = [
   LanguageOption(locale: const Locale('fr'), label: 'Français', flag: '🇫🇷'),
   LanguageOption(locale: const Locale('es'), label: 'Español', flag: '🇪🇸'),
   LanguageOption(locale: const Locale('it'), label: 'Italiano', flag: '🇮🇹'),
+  LanguageOption(locale: const Locale('pt'), label: 'Português', flag: '🇵🇹'),
   LanguageOption(locale: const Locale('ru'), label: 'Русский', flag: '🇷🇺'),
   LanguageOption(locale: const Locale('uk'), label: 'Українська', flag: '🇺🇦'),
+  LanguageOption(locale: const Locale('sv'), label: 'Svenska', flag: '🇸🇪'),
+  LanguageOption(locale: const Locale('ar'), label: 'العربية', flag: '🇸🇦'),
   LanguageOption(locale: const Locale('zh'), label: '中文', flag: '🇨🇳'),
 ];
