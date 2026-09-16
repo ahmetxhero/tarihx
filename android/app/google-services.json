@@ -13,7 +13,12 @@
           "package_name": "app.web.tarihx"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "80353237986-8d82o6sp79777ehk68950mm2kchpacdu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAjXQbaDclEhseLBOpWpYYRUQkeCQ6dIqA"
@@ -21,9 +26,23 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "80353237986-8d82o6sp79777ehk68950mm2kchpacdu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "80353237986-hte4b9ul895v2leu1cte68fm5q5oviqs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.web.tarihx",
+                "app_store_id": "6748096392"
+              }
+            }
+          ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-9590009775953981~9710223031"
     }
   ],
   "configuration_version": "1"

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>80353237986-hte4b9ul895v2leu1cte68fm5q5oviqs.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.80353237986-hte4b9ul895v2leu1cte68fm5q5oviqs</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDvJ9r-fnLuZBVKWLnHIegJCckQNFpkW_M</string>
 	<key>GCM_SENDER_ID</key>
@@ -28,5 +32,7 @@
 	<string>1:80353237986:ios:8f15c146546e09e58db7bb</string>
 	<key>DATABASE_URL</key>
 	<string>https://tarihx-default-rtdb.europe-west1.firebasedatabase.app</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-9590009775953981~9556828728</string>
 </dict>
 </plist>
